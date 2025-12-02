@@ -1,6 +1,7 @@
--- ====================== TABLOLAR ======================
 
-/*Veritabanı Yapısı
+/* ====================== Yasin YILDIRIM - YETGIM Final Projesi ======================
+
+Veritabanı Yapısı
 -Tablolar:
 ●	categories (kategoriler)
 ●	products (ürünler)
@@ -8,7 +9,11 @@
 ●	orders (siparişler)
 ●	order_items (sipariş detayları)
 ●	reviews (ürün yorumları)
-●	shipping_addresses (teslimat adresleri)*/
+●	shipping_addresses (teslimat adresleri)
+
+*Karışıklık olmaması için created_at sütunlarına ve default'u now() olan sütunlara elle veri eklerken sadece yyyy-mm-dd kullanılmıştır. */
+
+-- ====================== TABLOLAR ======================
 
 -- Kategoriler Tablosunu Oluşturma
 
@@ -91,7 +96,7 @@ CREATE TABLE "order_items" (
     FOREIGN KEY ("order_id") REFERENCES "orders"("id"),
     FOREIGN KEY ("product_id") REFERENCES "products"("id")
 );
--- Alter komutunu kullanarak sütun ismini düzenliyoruz.
+-- Örnek olması amacıyla alter komutunu kullanarak sütun ismini düzenliyoruz.
 ALTER TABLE order_items
 RENAME COLUMN unit_price TO total_price;
 
@@ -110,8 +115,11 @@ CREATE TABLE "reviews" (
 );
 
 -- ====================== TABLOLARA VERİ EKLEME ======================
--- 266. Satırda Veri Ekleme İşlemi Biter
+
+-- 340. Satırda Veri Ekleme İşlemi Biter
 -- Tabloların içini temizlemek için TRUNCATE TABLE tablox RESTART IDENTITY CASCADE;
+-- Örnek olarak orders tablosunun son 6 hanesini silmek için komut:
+-- DELETE FROM orders WHERE id IN (SELECT id FROM orders ORDER BY created_at DESC LIMIT 6);
 
 -- Kategori Tablosuna Veri Ekleme (10)
 
@@ -127,6 +135,7 @@ INSERT INTO categories (name, description) VALUES
 ('Bebek & Çocuk', 'Bebek bakım ürünleri, çocuk giysileri ve oyuncakları'),
 ('Sağlık & Vitamin', 'Vitamin, takviye ve sağlık ürünleri');
 
+select * from categories;
 
 -- Ürünler Tablosuna Veri Ekleme (30)
 
@@ -172,6 +181,8 @@ INSERT INTO products (category_id, name, description, price, stock) VALUES
 (10, 'Omega 3', 'Balık yağı kapsülleri, kalp ve beyin sağlığı için yüksek kaliteli içerik', 200.30, 80),
 (10, 'Protein Tozu', 'Whey protein, sporcular için kas gelişimini destekler ve yüksek protein içerir', 500.99, 50);
 
+select * from products;
+
 -- Müşteri Tablosuna Veri Ekleme (20)
 
 INSERT INTO customers (name, surname, age, gender, email, phone) VALUES
@@ -196,8 +207,9 @@ INSERT INTO customers (name, surname, age, gender, email, phone) VALUES
 ('Kaan','Taş',29,'Male','kaan.tas@gmail.com','05056789045'),
 ('Seda','Turan',33,'Female','seda.turan@gmail.com','05321237891');
 
+select * from customers;
 
--- Teslimat Adresi Tablosuna Veri Ekleme (20)
+-- Teslimat Adresi Tablosuna Veri Ekleme (25)
 
 INSERT INTO shipping_adresses (customer_id, address_line, city, country, zipcode) VALUES
 (1, 'Çamkule Mah. 4699 Sok. No:24_2', 'İzmir', 'Türkiye', '35080'),
@@ -219,63 +231,114 @@ INSERT INTO shipping_adresses (customer_id, address_line, city, country, zipcode
 (17, 'Yeşilvadi Mah. Tomurcuk Cad. No:4', 'Diyarbakır', 'Türkiye', '21080'),
 (18, 'Mavişehir Cad. Gümüş Sk. No:12', 'Muğla', 'Türkiye', '48000'),
 (19, 'Cumhuriyet Mah. Lale Sok. No:18', 'Malatya', 'Türkiye', '44030'),
-(20, 'Şehitler Cad. Park Evleri B Blok D:7', 'Ankara', 'Türkiye', '06010');
+(20, 'Şehitler Cad. Park Evleri B Blok D:7', 'Ankara', 'Türkiye', '06010'),
+(1, 'Yeni Mah. 123 Sok. No:10', 'İzmir', 'Türkiye', '35090'), --21
+(3, 'Çınar Mah. 45 Cad. No:12', 'Bursa', 'Türkiye', '16060'), --22
+(5, 'Barış Mah. 78 Sok. No:8', 'Kocaeli', 'Türkiye', '41050'), --23
+(7, 'Gülbahçe Mah. 33 Cad. No:5', 'Samsun', 'Türkiye', '55070'), --24
+(10, 'Atatürk Mah. 21 Sok. No:4', 'Eskişehir', 'Türkiye', '26040'); --25
 
--- Siparişler Tablosuna Veri Ekleme (15)
--- 1000tl ve üzerine kargo ücretsiz
+select * from shipping_adresses;
 
-INSERT INTO orders (customer_id, shipping_address_id, price, shipping_price, status, order_date) VALUES
-(1, 1, 800.00, 49.90, 'Tamamlandı', '2025-05-10'),
-(2, 2, 510.20, 49.90, 'Tamamlandı', '2025-05-22'),
-(3, 3, 14999.99, 0, 'Tamamlandı', '2025-06-05'),
-(4, 4, 1300.00, 0, 'Tamamlandı', '2025-06-28'),
-(5, 5, 2600.00, 0, 'Teslim Edildi', '2025-07-03'),
-(6, 6, 840.00, 49.90, 'Teslim Edildi', '2025-07-18'),
-(7, 7, 3490.00, 0, 'Teslim Edildi', '2025-08-02'),
-(8, 8, 920.00, 49.90, 'Teslim Edildi', '2025-08-27'),
-(9, 9, 1500.00, 0, 'Teslim Edildi', '2025-09-06'),
-(10, 10, 780.00, 49.90, 'Teslim Edildi', '2025-09-25'),
-(11, 11, 3200.00, 0, 'Kargoda', '2025-10-03'),
-(12, 12, 600.00, 49.90, 'Kargoda', '2025-10-11'),
-(13, 13, 1600.00, 0, 'Kargoda', '2025-10-22'),
-(14, 14, 450.00, 49.90, 'Kargoda', '2025-10-29'),
-(15, 15, 2799.00, 0, 'Hazırlanıyor', '2025-11-02');
+-- Siparişler Tablosuna Veri Ekleme (30)
+-- 1000tl ve üzeri siparişlere kargo ücretsiz
 
--- Sipariş Detayları Tablosuna Veri Ekleme (15)
+-- Orders tablosu
+INSERT INTO orders (id, customer_id, shipping_address_id, shipping_price, price, status, order_date) VALUES
+(1, 7, 7, 0.00, 20000.00, 'Tamamlandı', '2025-01-15'),
+(2, 6, 6, 49.90, 500.10, 'Tamamlandı', '2025-02-14'),
+(3, 5, 5, 0.00, 1200.00, 'Tamamlandı', '2025-03-15'),
+(4, 4, 4, 0.00, 1001.98, 'Tamamlandı', '2025-04-14'),
+(5, 20, 20, 0.00, 6500.00, 'Tamamlandı', '2025-05-15'),
+(6, 19, 19, 49.90, 1600.00, 'Tamamlandı', '2025-06-14'),
+(7, 18, 18, 49.90, 2100.00, 'Tamamlandı', '2025-07-15'),
+(8, 17, 17, 0.00, 1020.40, 'Tamamlandı', '2025-08-14'),
+(9, 16, 16, 49.90, 500.00, 'Tamamlandı', '2025-09-15'),
+(10, 15, 15, 0.00, 7001.20, 'Tamamlandı', '2025-10-14'),
+(11, 14, 14, 49.90, 500.99, 'Teslim Edildi', '2025-10-15'),
+(12, 13, 13, 0.00, 2403.96, 'Teslim Edildi', '2025-10-18'),
+(13, 12, 12, 0.00, 1600.00, 'Teslim Edildi', '2025-10-21'),
+(14, 11, 11, 0.00, 1200.80, 'Teslim Edildi', '2025-10-24'),
+(15, 10, 25, 49.90, 500.10, 'Teslim Edildi', '2025-10-27'),
+(16, 9, 9, 0.00, 8001.50, 'Teslim Edildi', '2025-10-30'),
+(17, 8, 8, 0.00, 2600.00, 'Teslim Edildi', '2025-11-02'),
+(18, 7, 24, 0.00, 27490.40, 'Teslim Edildi', '2025-11-05'),
+(19, 6, 6, 0.00, 3200.00, 'Teslim Edildi', '2025-11-08'),
+(20, 5, 23, 0.00, 600.20, 'Teslim Edildi', '2025-11-11'),
+(21, 4, 4, 49.90, 250.00, 'Kargoya Verildi', '2025-11-14'),
+(22, 3, 22, 0.00, 51980.00, 'Kargoya Verildi', '2025-11-17'),
+(23, 2, 2, 49.90, 510.20, 'Kargoya Verildi', '2025-11-20'),
+(24, 1, 21, 0.00, 44999.97, 'Kargoya Verildi', '2025-11-22'),
+(25, 10, 10, 49.90, 421.00, 'Kargoya Verildi', '2025-11-24'),
+(26, 11, 11, 0.00, 3200.60, 'Kargoya Verildi', '2025-11-25'),
+(27, 12, 12, 49.90, 500.10, 'Kargoya Verildi', '2025-11-26'),
+(28, 13, 13, 0.00, 1400.00, 'Hazırlanıyor', '2025-11-27'),
+(29, 14, 14, 49.90, 2401.60, 'Hazırlanıyor', '2025-11-28'),
+(30, 15, 15, 0.00, 10500.00, 'Hazırlanıyor', '2025-11-29');
 
-INSERT INTO order_items (order_id, product_id, quantity, total_price) VALUES (22,3,1,14999.99);
-(1, 4, 1, 849.90),
-(2, 5, 1, 560.10),
-(3, 3, 1, 14999.99),
-(4, 6, 1, 1300.00),
-(5, 1, 1, 2600.00),
-(6, 16, 1, 889.90),
-(7, 3, 1, 3490.00),
-(8, 14, 1, 969.90),
-(9, 2, 1, 1500.00),
-(10, 19, 1, 829.90),
-(11, 5, 1, 3200.00),
-(12, 8, 1, 649.90),
-(13, 12, 1, 1600.00),
-(14, 11, 1, 499.90),
-(15, 4, 1, 2799.00);
+select * from orders;
+
+-- Sipariş Detayları Tablosuna Veri Ekleme (30)
+
+INSERT INTO order_items (id, order_id, product_id, quantity, total_price) VALUES
+(1, 1, 21, 2, 20000.00),
+(2, 2, 20, 1, 500.10),
+(3, 3, 19, 2, 1200.00),
+(4, 4, 18, 2, 1001.98),
+(5, 5, 22, 5, 6500.00),
+(6, 6, 4, 2, 1600.00),
+(7, 7, 7, 3, 2100.00),
+(8, 8, 5, 2, 1020.40),
+(9, 9, 16, 2, 500.00),
+(10, 10, 12, 2, 7001.20),
+(11, 11, 30, 1, 500.99),
+(12, 12, 15, 4, 2403.96),
+(13, 13, 4, 2, 1600.00),
+(14, 14, 23, 2, 1200.80),
+(15, 15, 20, 1, 500.10),
+(16, 16, 9, 5, 8001.50),
+(17, 17, 6, 2, 2600.00),
+(18, 18, 2, 1, 27490.40),
+(19, 19, 13, 4, 3200.00),
+(20, 20, 11, 2, 600.20),
+(21, 21, 16, 1, 250.00),
+(22, 22, 1, 2, 51980.00),
+(23, 23, 5, 1, 510.20),
+(24, 24, 3, 3, 44999.97),
+(25, 25, 14, 2, 421.00),
+(26, 26, 9, 2, 3200.60),
+(27, 27, 20, 1, 500.10),
+(28, 28, 7, 2, 1400.00),
+(29, 29, 23, 4, 2401.60),
+(30, 30, 25, 3, 10500.00);
+
+select * from order_items;
 
 -- Ürün Yorumları Tablosuna Veri Ekleme (13)
 
-INSERT INTO reviews (product_id, customer_id, rating, comment) VALUES
-(4, 1, 5, 'Ürün kaliteli ve tam bedenime oldu. Tavsiye ederim.'),
-(5, 2, 3, 'Kumaşı güzel ama biraz ince, yine de memnun kaldım.'),
-(3, 3, 5, 'Tablet çok hızlı ve ekranı mükemmel. Beklentimi aştı.'),
-(6, 4, 4, 'Tencere seti kaliteli, sadece kapaklar biraz hafif.'),
-(1, 5, 5, 'Mouse performansı efsane, 8000Hz farkını hissettiriyor.'),
-(16, 6, 5, 'Renkleri harika, kalıcılığı da oldukça iyi.'),
-(3, 7, 4, 'Tablet gayet iyi fakat kargo biraz gecikti.'),
-(14, 8, 4, 'Puzzle baskısı kaliteli, parçalar tam oturuyor.'),
-(2, 9, 5, 'Ekran kartı performansı mükemmel, fiyatına değer.'),
-(19, 10, 3, 'Bebek bezi kaliteli ama paket biraz ezik geldi.');
+INSERT INTO reviews (product_id, customer_id, rating, comment, created_at) VALUES
+(21, 7, 5, 'Muhteşem bir ürün, tam beklediğim gibi. Hızlı kargo.', '2025-01-20'),
+(20, 6, 4, 'Fiyatına göre performansı çok iyi. Sadece biraz daha hızlı olabilirdi.', '2025-02-20'),
+(19, 5, 5, 'Çok şık ve kullanışlı. Bayıldım!', '2025-03-20'),
+(18, 4, 3, 'Ortalama bir ürün. İşimi gördü ancak kalitesi çok yüksek değil.', '2025-04-20'),
+(22, 20, 5, 'Beklediğimden bile iyi çıktı. Kesinlikle tavsiye ederim.', '2025-05-20'),
+(4, 19, 4, 'Kullanımı basit, dayanıklı malzeme. Beklenenden daha iyi.', '2025-06-20'),
+(7, 18, 5, 'Tamamen sorunsuz bir alışveriş. Ürün açıklaması doğruydu.', '2025-07-20'),
+(5, 17, 4, 'Hediye olarak aldım, çok beğenildi. Paketleme özenliydi.', '2025-08-20'),
+(16, 16, 3, 'Kargo yavaştı ama ürün iyi paketlenmişti. Fena değil.', '2025-09-20'),
+(12, 15, 5, 'Mükemmel, bu fiyata kaçırılmaz. Kesinlikle tavsiye.', '2025-10-20'),
+(30, 14, 4, 'Görseldeki gibi geldi. Rengi canlı ve kaliteli his veriyor.', '2025-10-20'),
+(15, 13, 5, 'Süper hızlı teslimat ve kaliteli ürün. Tekrar sipariş verilebilir.', '2025-10-23'),
+(4, 12, 4, 'Ambalaj biraz hasarlıydı ama ürün sağlam. İyi ki almışım.', '2025-10-26'),
+(23, 11, 3, 'Boyutu beklediğimden küçüktü. İşlevi iyi ve kullanışlı.', '2025-10-29'),
+(20, 10, 5, 'Tam bir fiyat/performans ürünü. Çok memnun kaldım.', '2025-11-01'),
+(9, 9, 4, 'Yorumlarda yazıldığı kadar iyi. Tavsiye ederim.', '2025-11-04'),
+(6, 8, 5, 'Kurulumu çok kolay oldu. Hiç zorlanmadım.', '2025-11-07'),
+(2, 7, 4, 'Harika bir tasarım, çok zarif duruyor. Kullanımı rahat.', '2025-11-10'),
+(13, 6, 3, 'Uzun vadede nasıl olur bilemem ama şimdilik sorun yok gibi.', '2025-11-13'),
+(11, 5, 5, 'Kesinlikle beş yıldızı hak ediyor. Çok hızlı ulaştı.', '2025-11-14');
 
-/* Örnek olarak orders tablosunun son 6 hanesini silmek için komut:
-DELETE FROM orders WHERE id IN (SELECT id FROM orders ORDER BY created_at DESC LIMIT 6); */
+select * from reviews;
 
 /* ====================== FONKSİYONLAR ======================
 
@@ -385,7 +448,7 @@ as $$
     end;
     $$;
 
-/* ====================== TRIGGERLAR ======================
+/* ====================== TRIGGER'LAR ======================
 
  2. Triggerlar (3 adet)
 1	Sipariş oluşturulduğunda stok miktarını düşüren trigger
@@ -463,7 +526,7 @@ after update on products
 for each row
 execute function restore_stock_on_cancel();
 
-/* ====================== STORED PROCEDURELAR ======================
+/* ====================== STORED PROCEDURE'LAR ======================
 
 1	sp_place_order() - Sipariş verme işlemi (stok kontrolü dahil)
 2	sp_cancel_order() - Sipariş iptal etme işlemi */
@@ -532,10 +595,23 @@ as $$
     $$;
 
 --Kullanmak için
-call sp_cancel_order(16);
+call sp_cancel_order(22);
+
+/* ====================== VIEW'LAR ======================
+
+1	Kategorilere göre ürün satış istatistikleri
+2	Müşteri sipariş özeti (toplam sipariş, toplam tutar, ortalama sepet)*/
+
+-- Vıew'ları doğru analiz edebilmek ve doğru çıktılar alabilmemiz için orders ve order_items kategorilerinedaha detaylı veri girmemiz gerek
+
+select * from products;
+select * from orders;
+select * from order_items;
 
 
 
 
 
 
+
+-- 1 Kategorilere göre ürün satış istatistikleri
