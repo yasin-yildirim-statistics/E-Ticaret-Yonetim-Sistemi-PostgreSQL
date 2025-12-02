@@ -276,32 +276,32 @@ INSERT INTO orders (id, customer_id, shipping_address_id, shipping_price, price,
 
 INSERT INTO order_items (id, order_id, product_id, quantity, total_price) VALUES
 (1, 1, 21, 2, 20000.00),
-(2, 2, 20, 1, 500.10),
+(2, 2, 20, 1, 550.00),
 (3, 3, 19, 2, 1200.00),
 (4, 4, 18, 2, 1001.98),
 (5, 5, 22, 5, 6500.00),
 (6, 6, 4, 2, 1600.00),
 (7, 7, 7, 3, 2100.00),
 (8, 8, 5, 2, 1020.40),
-(9, 9, 16, 2, 500.00),
+(9, 9, 16, 2, 549.90),
 (10, 10, 12, 2, 7001.20),
-(11, 11, 30, 1, 500.99),
+(11, 11, 30, 1, 550.89),
 (12, 12, 15, 4, 2403.96),
 (13, 13, 4, 2, 1600.00),
 (14, 14, 23, 2, 1200.80),
-(15, 15, 20, 1, 500.10),
+(15, 15, 20, 1, 550.00),
 (16, 16, 9, 5, 8001.50),
 (17, 17, 6, 2, 2600.00),
 (18, 18, 2, 1, 27490.40),
 (19, 19, 13, 4, 3200.00),
-(20, 20, 11, 2, 600.20),
-(21, 21, 16, 1, 250.00),
+(20, 20, 11, 2, 650.10),
+(21, 21, 16, 1, 299.90),
 (22, 22, 1, 2, 51980.00),
-(23, 23, 5, 1, 510.20),
+(23, 23, 5, 1, 560.10),
 (24, 24, 3, 3, 44999.97),
-(25, 25, 14, 2, 421.00),
+(25, 25, 14, 2, 470.90),
 (26, 26, 9, 2, 3200.60),
-(27, 27, 20, 1, 500.10),
+(27, 27, 20, 1, 550.00),
 (28, 28, 7, 2, 1400.00),
 (29, 29, 23, 4, 2401.60),
 (30, 30, 25, 3, 10500.00);
@@ -437,6 +437,7 @@ as $$
 select stock_status_check(29);
 
 -- ============================================ TRIGGER'LAR ============================================
+-- TEKRAR YAP
 
 -- 1 Sipariş oluşturulduğunda stok miktarını düşüren trigger
 
@@ -628,9 +629,34 @@ order by "Müşteri Tam Adı";
 select * from vm_customer_order_details;
 
 -- ============================================ KOMPLEKS SORGULAR ============================================
-/*
- 5. Kompleks Sorgular
-●	En çok satan ürünler (TOP 10)
-●	Kategorilere göre ortalama ürün fiyatları ve stok durumları
-●	Subquery ile: Ortalama sipariş tutarından yüksek siparişler
- */
+
+-- 1. En çok satan ürünler sorgusu (TOP10):
+select p.name as "Ürün Adı",
+       sum(oi.quantity) as "Ürün Toplam Satış Miktarı"
+from order_items oi
+inner join products p on oi.product_id = p.id
+group by p.name
+order by "Ürün Toplam Satış Miktarı" desc limit 10;
+
+-- 2. Kategorilere göre ortalama ürün fiyatları ve stok durumları
+select
+    c.name as "Kategori Adı",
+    round(AVG(P.price)) as "Ortalama Ürün Fiyatı", -- virgülden sonraki sayılardan kurtulmak için
+    round(avg(p.stock)) as "Ortalama Stok Durumu"  -- round özelliğini kullanıyorum
+    from categories c
+inner join products p on c.id = p.category_id
+group by c.name
+order by c.name;
+
+-- 3. Subquery ile: Ortalama sipariş tutarından yüksek siparişler
+-- yapılacak subquery = select avg(price) from orders; 6856.12
+select
+o.id AS "Sipariş ID",
+concat(c.name,' ',c.surname) as "Müşteri Tam Adı",
+o.price AS "Toplam Sipariş Fiyatı"
+from orders o
+inner join customers c on c.id = o.customer_id
+where o.price > (select avg(price) from orders) -- "o.price >" dan sonra ortalama sipariş tutarını veren query yazılır.
+order by o.price desc;
+
+ -- En yüksek tutarlı siparişten sıralandı
