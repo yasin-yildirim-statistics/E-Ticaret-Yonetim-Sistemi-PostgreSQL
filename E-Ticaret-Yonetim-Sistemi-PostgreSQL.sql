@@ -13,7 +13,7 @@ Veritabanı Yapısı
 
 *Karışıklık olmaması için created_at sütunlarına ve default'u now() olan sütunlara elle veri eklerken sadece yyyy-mm-dd kullanılmıştır. */
 
--- ====================== TABLOLAR ======================
+-- ============================================ TABLOLAR ============================================
 
 -- Kategoriler Tablosunu Oluşturma
 
@@ -114,14 +114,14 @@ CREATE TABLE "reviews" (
     FOREIGN KEY ("customer_id") REFERENCES "customers"("id")
 );
 
--- ====================== TABLOLARA VERİ EKLEME ======================
-
+-- ============================================ TABLOLARA VERİ EKLEME ============================================
+-- Tüm verileri baştan sona seçerek, tek hamlede run yapabilirsiniz.
 -- 340. Satırda Veri Ekleme İşlemi Biter
 -- Tabloların içini temizlemek için TRUNCATE TABLE tablox RESTART IDENTITY CASCADE;
--- Örnek olarak orders tablosunun son 6 hanesini silmek için komut:
--- DELETE FROM orders WHERE id IN (SELECT id FROM orders ORDER BY created_at DESC LIMIT 6);
+-- Örnek olarak orders tablosunun son 6 hanesini silmek için komut: DELETE FROM orders WHERE id IN (SELECT id FROM orders ORDER BY created_at DESC LIMIT 6);
 
 -- Kategori Tablosuna Veri Ekleme (10)
+-- select * from categories;
 
 INSERT INTO categories (name, description) VALUES
 ('Elektronik', 'Telefon, bilgisayar, tablet, kamera ve elektronik aksesuarlar'),
@@ -135,9 +135,8 @@ INSERT INTO categories (name, description) VALUES
 ('Bebek & Çocuk', 'Bebek bakım ürünleri, çocuk giysileri ve oyuncakları'),
 ('Sağlık & Vitamin', 'Vitamin, takviye ve sağlık ürünleri');
 
-select * from categories;
-
 -- Ürünler Tablosuna Veri Ekleme (30)
+-- select * from products;
 
 INSERT INTO products (category_id, name, description, price, stock) VALUES
 -- Elektronik
@@ -181,9 +180,8 @@ INSERT INTO products (category_id, name, description, price, stock) VALUES
 (10, 'Omega 3', 'Balık yağı kapsülleri, kalp ve beyin sağlığı için yüksek kaliteli içerik', 200.30, 80),
 (10, 'Protein Tozu', 'Whey protein, sporcular için kas gelişimini destekler ve yüksek protein içerir', 500.99, 50);
 
-select * from products;
-
 -- Müşteri Tablosuna Veri Ekleme (20)
+-- select * from customers;
 
 INSERT INTO customers (name, surname, age, gender, email, phone) VALUES
 ('Yasin','Yıldırım',28,'Male','yasinyildirim.work@gmail.com','05077364511'),
@@ -207,9 +205,8 @@ INSERT INTO customers (name, surname, age, gender, email, phone) VALUES
 ('Kaan','Taş',29,'Male','kaan.tas@gmail.com','05056789045'),
 ('Seda','Turan',33,'Female','seda.turan@gmail.com','05321237891');
 
-select * from customers;
-
 -- Teslimat Adresi Tablosuna Veri Ekleme (25)
+-- select * from shipping_adresses;
 
 INSERT INTO shipping_adresses (customer_id, address_line, city, country, zipcode) VALUES
 (1, 'Çamkule Mah. 4699 Sok. No:24_2', 'İzmir', 'Türkiye', '35080'),
@@ -238,12 +235,10 @@ INSERT INTO shipping_adresses (customer_id, address_line, city, country, zipcode
 (7, 'Gülbahçe Mah. 33 Cad. No:5', 'Samsun', 'Türkiye', '55070'), --24
 (10, 'Atatürk Mah. 21 Sok. No:4', 'Eskişehir', 'Türkiye', '26040'); --25
 
-select * from shipping_adresses;
-
 -- Siparişler Tablosuna Veri Ekleme (30)
 -- 1000tl ve üzeri siparişlere kargo ücretsiz
+-- select * from orders;
 
--- Orders tablosu
 INSERT INTO orders (id, customer_id, shipping_address_id, shipping_price, price, status, order_date) VALUES
 (1, 7, 7, 0.00, 20000.00, 'Tamamlandı', '2025-01-15'),
 (2, 6, 6, 49.90, 500.10, 'Tamamlandı', '2025-02-14'),
@@ -276,9 +271,8 @@ INSERT INTO orders (id, customer_id, shipping_address_id, shipping_price, price,
 (29, 14, 14, 49.90, 2401.60, 'Hazırlanıyor', '2025-11-28'),
 (30, 15, 15, 0.00, 10500.00, 'Hazırlanıyor', '2025-11-29');
 
-select * from orders;
-
 -- Sipariş Detayları Tablosuna Veri Ekleme (30)
+-- select * from order_items;
 
 INSERT INTO order_items (id, order_id, product_id, quantity, total_price) VALUES
 (1, 1, 21, 2, 20000.00),
@@ -312,9 +306,8 @@ INSERT INTO order_items (id, order_id, product_id, quantity, total_price) VALUES
 (29, 29, 23, 4, 2401.60),
 (30, 30, 25, 3, 10500.00);
 
-select * from order_items;
-
 -- Ürün Yorumları Tablosuna Veri Ekleme (13)
+-- select * from reviews;
 
 INSERT INTO reviews (product_id, customer_id, rating, comment, created_at) VALUES
 (21, 7, 5, 'Muhteşem bir ürün, tam beklediğim gibi. Hızlı kargo.', '2025-01-20'),
@@ -338,14 +331,7 @@ INSERT INTO reviews (product_id, customer_id, rating, comment, created_at) VALUE
 (13, 6, 3, 'Uzun vadede nasıl olur bilemem ama şimdilik sorun yok gibi.', '2025-11-13'),
 (11, 5, 5, 'Kesinlikle beş yıldızı hak ediyor. Çok hızlı ulaştı.', '2025-11-14');
 
-select * from reviews;
-
-/* ====================== FONKSİYONLAR ======================
-
-Fonksiyonlar (3 adet)
-1	calculate_order_total(order_id) - Sipariş toplam tutarını hesaplayan fonksiyon
-2	customer_lifetime_value(customer_id) - Müşterinin toplam alışveriş tutarını hesaplayan
-3	stock_status(product_id) - Stok durumunu kontrol eden (Bol/Orta/Az/Tükendi) fonksiyon */
+-- ============================================ FONKSİYONLAR ============================================
 
 -- 1 calculate_order_total(order_id) - Sipariş toplam tutarını hesaplayan fonksiyon
 -- (product.price * order_items.quantity) + orders.shipping_price
@@ -376,10 +362,10 @@ as $$
     where c.id = f_customer_id;
     $$;
 --Kullanmak için
-select customer_lifetime_value(1);
+select customer_lifetime_value(11);
 -- orders tablosuna yeni eklenen veriler için order_items tablosuna da veriler eklenmeden doğru çalışmaz.
 
--- BONUS
+-- BONUS OLARAK
 -- 2 ad soyad girildiğinde müşterinin toplam alışverişini hesaplayan fonksiyon
 create or replace function customer_lifetime_value_name(a varchar(30), b varchar(30))
 returns numeric(10,2)
@@ -422,10 +408,10 @@ as $$
     end;
     $$;
 --Kullanmak için örnek
-select stock_status(5);
+select stock_status(6);
 
 -- BONUS
--- stok miktarı elle girildiğinde, stok durumunu yazan fonksiyon
+-- stok miktarı elle girildiğinde, sadece yazılan sayının stok durumunu yazan fonksiyon
 create or replace function stock_status_check(stok int)
 returns varchar
 language plpgsql
@@ -435,9 +421,9 @@ as $$
     BEGIN
         if stok >= 100 then
             durum:= 'Bol';
-        elseif stok>= 50 then
+        elseif stok >= 30 then
             durum:= 'Orta';
-        elseif stok>= 0 then
+        elseif stok >= 0 then
             durum:= 'Az';
         elseif stok = 0 then
             durum:= 'Tükendi';
@@ -447,13 +433,10 @@ as $$
         return durum;
     end;
     $$;
+--Kullanmak için:
+select stock_status_check(29);
 
-/* ====================== TRIGGER'LAR ======================
-
- 2. Triggerlar (3 adet)
-1	Sipariş oluşturulduğunda stok miktarını düşüren trigger
-2	Ürün fiyatı güncellendiğinde log tutan trigger
-3	Sipariş iptal edildiğinde stokları geri yükleyen trigger */
+-- ============================================ TRIGGER'LAR ============================================
 
 -- 1 Sipariş oluşturulduğunda stok miktarını düşüren trigger
 
@@ -504,7 +487,7 @@ create trigger trg_log_price_change
     for each row
     execute function log_price_change();
 
---3	Sipariş iptal edildiğinde stokları geri yükleyen trigger
+--3	Sipariş iptal edildiğinde stokları geri yükleyen trigger (tekrar bakılması lazım)
 
 create or replace function restore_stock_on_cancel()
 returns trigger
@@ -526,10 +509,9 @@ after update on products
 for each row
 execute function restore_stock_on_cancel();
 
-/* ====================== STORED PROCEDURE'LAR ======================
+-- ============================================ STORED PROCEDURE'LAR ============================================
 
-1	sp_place_order() - Sipariş verme işlemi (stok kontrolü dahil)
-2	sp_cancel_order() - Sipariş iptal etme işlemi */
+-- 1	sp_place_order() - Sipariş verme işlemi (stok kontrolü dahil)
 
 create or replace procedure sp_place_order(
 s_customer_id int,
@@ -550,8 +532,8 @@ as $$
         elseif stock_check < s_quantity then
             raise exception 'Bu üründe % tane stok bulunmamaktadır.', s_quantity;
         end if;
-        --order_date = now() ve status = 'Hazırlanıyor' default değerlerine sahip oldukları için eklenmeyecek
-        insert into orders(customer_id, shipping_address_id, shipping_price, price) values --order_date = now(), status = 'Hazırlanıyor' default değerlerine sahip oldukları için bu yüzden eklenmedi
+        --zaten order_date = now() ve status = 'Hazırlanıyor' default değerlerine sahip oldukları için veri olarak eklenmeyecek
+        insert into orders(customer_id, shipping_address_id, shipping_price, price) values
         (s_customer_id, s_shipping_address_id, s_shipping_price, s_price);
     end;
     $$;
@@ -560,8 +542,7 @@ call sp_place_order(1, 1, 0.00, 14999.99,3, 1);
 -- Stok Kontrol Hatasını Test Etmek İçin;
 call sp_place_order(1, 1, 0.00, 82514.85,8, 15);
 
-
--- 2 sp_cancel_order() - Sipariş iptal etme işlemi */
+-- 2 sp_cancel_order() - Sipariş iptal etme işlemi
 
 create or replace procedure sp_cancel_order(s_order_id int)
 language plpgsql
@@ -597,21 +578,10 @@ as $$
 --Kullanmak için
 call sp_cancel_order(22);
 
-/* ====================== VIEW'LAR ======================
-
-1	Kategorilere göre ürün satış istatistikleri
-2	Müşteri sipariş özeti (toplam sipariş, toplam tutar, ortalama sepet)*/
-
--- Vıew'ları doğru analiz edebilmek ve doğru çıktılar alabilmemiz için orders ve order_items kategorilerinedaha detaylı veri girmemiz gerek
-
-select * from products;
-select * from orders;
-select * from order_items;
+-- ============================================ VIEW'LAR ============================================
 
 
-
-
-
+-- 2	Müşteri sipariş özeti (toplam sipariş, toplam tutar, ortalama sepet)*/
 
 
 -- 1 Kategorilere göre ürün satış istatistikleri
