@@ -243,7 +243,7 @@ INSERT INTO orders (customer_id, shipping_address_id, price, shipping_price, sta
 
 -- Sipariş Detayları Tablosuna Veri Ekleme (15)
 
-INSERT INTO order_items (order_id, product_id, quantity, total_price) VALUES
+INSERT INTO order_items (order_id, product_id, quantity, total_price) VALUES (22,3,1,14999.99);
 (1, 4, 1, 849.90),
 (2, 5, 1, 560.10),
 (3, 3, 1, 14999.99),
@@ -274,9 +274,12 @@ INSERT INTO reviews (product_id, customer_id, rating, comment) VALUES
 (2, 9, 5, 'Ekran kartı performansı mükemmel, fiyatına değer.'),
 (19, 10, 3, 'Bebek bezi kaliteli ama paket biraz ezik geldi.');
 
--- ====================== FONKSİYONLAR ======================
+/* Örnek olarak orders tablosunun son 6 hanesini silmek için komut:
+DELETE FROM orders WHERE id IN (SELECT id FROM orders ORDER BY created_at DESC LIMIT 6); */
 
-/* 1. Fonksiyonlar (3 adet)
+/* ====================== FONKSİYONLAR ======================
+
+Fonksiyonlar (3 adet)
 1	calculate_order_total(order_id) - Sipariş toplam tutarını hesaplayan fonksiyon
 2	customer_lifetime_value(customer_id) - Müşterinin toplam alışveriş tutarını hesaplayan
 3	stock_status(product_id) - Stok durumunu kontrol eden (Bol/Orta/Az/Tükendi) fonksiyon */
@@ -298,7 +301,7 @@ select calculate_order_total(2);
 
 -- 2 customer_lifetime_value(customer_id) - Müşterinin toplam alışveriş tutarını hesaplayan
 -- (product.price * order_items.quantity) + orders.shipping_price where customer.id = ...
-create or replace function customer_lifetime_value(a int)
+create or replace function customer_lifetime_value(f_customer_id int)
 returns numeric(10,2)
 language sql
 as $$
@@ -307,10 +310,11 @@ as $$
     inner join order_items oi on  oi.order_id = o.id
     inner join products p on p.id = oi.product_id
     inner join customers c on c.id = o.customer_id
-    where c.id = a;
+    where c.id = f_customer_id;
     $$;
 --Kullanmak için
 select customer_lifetime_value(1);
+-- orders tablosuna yeni eklenen veriler için order_items tablosuna da veriler eklenmeden doğru çalışmaz.
 
 -- BONUS
 -- 2 ad soyad girildiğinde müşterinin toplam alışverişini hesaplayan fonksiyon
@@ -381,14 +385,12 @@ as $$
     end;
     $$;
 
--- ====================== TRIGGERLAR ======================
+/* ====================== TRIGGERLAR ======================
 
-/* 2. Triggerlar (3 adet)
+ 2. Triggerlar (3 adet)
 1	Sipariş oluşturulduğunda stok miktarını düşüren trigger
 2	Ürün fiyatı güncellendiğinde log tutan trigger
 3	Sipariş iptal edildiğinde stokları geri yükleyen trigger */
-
-
 
 -- 1 Sipariş oluşturulduğunda stok miktarını düşüren trigger
 
@@ -420,13 +422,13 @@ create table product_price_change_log(
     changed_at timestamp default now() --değişim zamanını tutar
 );
 
--- trigger fonksiyonu
+-- Trigger fonksiyonu
 create or replace function log_price_change()
 returns trigger
 language plpgsql
 as $$
-    BEGIN -- fiyat değiştiğinde log almak
-        if new.price <> old.price then
+    BEGIN
+        if new.price <> old.price then -- fiyat değiştiğinde log almak
             insert into product_price_change_log (product_id, old_price, new_price) VALUES(
             old.id, old_price, new_price);
         end if;
@@ -461,8 +463,8 @@ after update on products
 for each row
 execute function restore_stock_on_cancel();
 
--- ====================== STORED PROCEDURELAR ======================
-/*
+/* ====================== STORED PROCEDURELAR ======================
+
 1	sp_place_order() - Sipariş verme işlemi (stok kontrolü dahil)
 2	sp_cancel_order() - Sipariş iptal etme işlemi */
 
@@ -496,13 +498,41 @@ call sp_place_order(1, 1, 0.00, 14999.99,3, 1);
 call sp_place_order(1, 1, 0.00, 82514.85,8, 15);
 
 
+-- 2 sp_cancel_order() - Sipariş iptal etme işlemi */
 
+create or replace procedure sp_cancel_order(s_order_id int)
+language plpgsql
+as $$
+    DECLARE
+        sp_order_id_check int:= null;
+        sp_order_status_check varchar(50):= null;
+    BEGIN
+        -- Girilen s_order_id siparişlerde var mı yok mu (valid) kontrol etmek
+        select id into sp_order_id_check from orders where id = s_order_id;
+        if sp_order_id_check is null then
+        raise exception 'Doğru sipariş numarası giriniz.';
+        end if;
 
+         -- Girilen order_id valid ise devam;
+        select status into sp_order_status_check from orders where id = s_order_id;
 
+        if sp_order_status_check ilike 'Kargoda' then
+            raise exception 'Siparişinizi iptal etmek için ürünler tarafınıza ulaşınca, anlaşmalı kargo firması ile ürünleri iade edin.';
+        elseif sp_order_status_check ilike 'Teslim Edildi' then
+            raise exception 'Lütfen siparişin iptali için, ürünleri anlaşmalı kargo firmasına teslim edin';
+        elseif sp_order_status_check ilike 'İade Kargoda' then
+            raise exception 'Ürünlerin iadesi, ürünleri teslim aldığımız andan itibaren 2(iki) iş günü içerisinde yapılacaktır.';
+        elseif sp_order_status_check ilike 'Tamamlandı' then
+            raise exception 'Siparişin iptali için sizlere tanınan süre bitmiştir. Lütfen ürünlerle ilgili bir sorun var ise garanti işlemlerini başlatınız.';
+        else delete from orders where id = s_order_id;
+        raise notice '% nolu siparişiniz iptal edilmiştir.', s_order_id;
+        end if;
 
+    end;
+    $$;
 
-
-
+--Kullanmak için
+call sp_cancel_order(16);
 
 
 
