@@ -466,9 +466,34 @@ execute function restore_stock_on_cancel();
 1	sp_place_order() - Sipariş verme işlemi (stok kontrolü dahil)
 2	sp_cancel_order() - Sipariş iptal etme işlemi */
 
+create or replace procedure sp_place_order(
+s_customer_id int,
+s_shipping_address_id int,
+s_shipping_price numeric(10,2),
+s_price numeric(10,2),
+s_products_id int,
+s_quantity int)
+language plpgsql
+as $$
+    DECLARE
+        stock_check int:= null;
+    BEGIN -- seçtiğimiz product_id, products tablosundaki id'ye bakarak stok miktarını stock_check değerine atar.
+        select stock into stock_check from products where id = s_products_id;
 
-
-
+        if stock_check = null then
+            raise exception 'Bu üründe stok kalmamıştır.';
+        elseif stock_check < s_quantity then
+            raise exception 'Bu üründe % tane stok bulunmamaktadır.', s_quantity;
+        end if;
+        --order_date = now() ve status = 'Hazırlanıyor' default değerlerine sahip oldukları için eklenmeyecek
+        insert into orders(customer_id, shipping_address_id, shipping_price, price) values --order_date = now(), status = 'Hazırlanıyor' default değerlerine sahip oldukları için bu yüzden eklenmedi
+        (s_customer_id, s_shipping_address_id, s_shipping_price, s_price);
+    end;
+    $$;
+--Kullanmak için;
+call sp_place_order(1, 1, 0.00, 14999.99,3, 1);
+-- Stok Kontrol Hatasını Test Etmek İçin;
+call sp_place_order(1, 1, 0.00, 82514.85,8, 15);
 
 
 
