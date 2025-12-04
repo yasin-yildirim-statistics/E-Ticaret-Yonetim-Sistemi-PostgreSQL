@@ -90,7 +90,7 @@ call sp_place_order(1, 1, 0.00, 82514.85,8, 15);
 ```
 
 Detaylı tüm komutlar, fonksiyonlar ve prosedürler `Yasin_Yildirim_E_Ticaret_Yönetimi.sql` dosyasında açıklayıcı yorumlar ile birlikte sunulmuştur.
-Her şeyi tek dosyada görmek istemeyenler için 'Extras' klasörü içinde her bir sql bileşeni için ayrı ayrı console dosyası eklenmiştir.
+Her şeyi tek dosyada görmek istemeyenler için 'Extras' klasörü içinde her bir fonksiyon türü için ayrı ayrı console dosyaları eklenmiştir.
 
 ## 📂 Proje Dosya Yapısı
 
