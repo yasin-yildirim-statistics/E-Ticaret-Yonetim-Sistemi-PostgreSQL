@@ -1,13 +1,17 @@
 # E-Ticaret Yönetim Sistemi (PostgreSQL) 🛒
 
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-11%2B-blue?logo=postgresql)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)](https://www.docker.com/)
 [![GitHub](https://img.shields.io/badge/GitHub-hosted-black?logo=github)](https://github.com/yasin-yildirim-statistics/E-Ticaret-Yonetim-Sistemi-PostgreSQL)
-[![DrawSQL](https://img.shields.io/badge/ER%20Diagram-DrawSQL-green?logo=drawsql)](https://drawsql.app/)
+[![DrawSQL](https://img.shields.io/badge/Diagram-DrawSQL-green?logo=drawsql)](https://drawsql.app/)
+[![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)](https://www.docker.com/) |
+[![Portainer](https://img.shields.io/badge/Portainer-1B2F6A?logo=portainer&logoColor=white)](https://www.portainer.io/)
+[![DataGrip](https://img.shields.io/badge/DataGrip-1F2D62?logo=datagrip&logoColor=white)](https://www.jetbrains.com/datagrip/) [![DBeaver](https://img.shields.io/badge/DBeaver-4076A7?logo=dbeaver&logoColor=white)](https://dbeaver.io/)
 
-## Proje Hakkında
+## 📖 Proje Hakkında
 
 Bu proje, **PostgreSQL** kullanılarak geliştirilmiş, e-ticaret yönetim süreçlerini kapsayan detaylı bir veritabanı yapısı sunar. Veritabanı modeli, kategorilerden ürünlere, müşterilerden siparişler ve yorumlara kadar tüm temel e-ticaret bileşenlerini kapsamaktadır. Proje kapsamında:
+
+### 🌟 Temel Özellikler
 
 - **İlişkisel Veri Modeli**: ER diyagramı ve anahtar geçişlerle ürün, kategori, müşteri, sipariş, adres, yorum ilişkileri modellenmiştir.
 - **Zengin SQL İçeriği**: View, Function, Trigger ve Procedure örnekleriyle veritabanı mantığı detaylandırılmıştır.
@@ -26,7 +30,7 @@ Diyagramı görmek için: [Proje Linki](https://drawsql.app/teams/none-4350/diag
 
 Kodu görmek için: [CodeShare](https://codeshare.io/e-ticaret-portfolio)
 
-## Kapsamda Yer Alan Tablolar
+## 🗃️ Veritabanı İçeriği
 
 - `categories`: Kategoriler
 - `products`: Ürünler
@@ -36,7 +40,7 @@ Kodu görmek için: [CodeShare](https://codeshare.io/e-ticaret-portfolio)
 - `shipping_addresses`: Teslimat adresleri
 - `reviews`: Ürün yorumları
 
-## İçerikte Neler Var?
+## Neler Var?
 
 - **Fonksiyonlar**: Sipariş toplam tutarı, müşteri yaşam boyu değeri, stok durumu hesaplayan fonksiyonlar
 - **Trigger‘lar**: Sipariş sonrası stok güncelleme, ürün fiyat değişiminde loglama, sipariş iptalinde stok iade işlemleri
@@ -55,7 +59,25 @@ Kodu görmek için: [CodeShare](https://codeshare.io/e-ticaret-portfolio)
 Detaylı tüm komutlar, fonksiyonlar ve prosedürler `Yasin_Yildirim_E_Ticaret_Yönetimi.sql` dosyasında açıklayıcı yorumlar ile birlikte sunulmuştur.
 Her şeyi tek dosyada görmek istemeyenler için 'Extras' klasörü içinde her bir sql bileşeni için ayrı ayrı console dosyası eklenmiştir.
 
-## Katkı ve İletişim
+## 📂 Proje Dosya Yapısı
+
+Proje, kolay yönetim için modüler bir yapıda düzenlenmiştir:
+
+```text
+E-Ticaret-Yonetim-Sistemi-PostgreSQL/
+├── Extras/                     # SQL bileşenlerinin ayrı ayrı bulunduğu klasör
+│   ├── 01_tables.sql           # Tablo oluşturma komutları (DDL)
+│   ├── 02_inserts.sql          # Örnek veriler (Dummy Data)
+│   ├── 03_queries.sql          # Analitik sorgular ve raporlar
+│   ├── 04_procedures.sql       # Sipariş ve işlem prosedürleri
+│   ├── 05_triggers.sql         # Otomasyon tetikleyicileri
+│   └── 06_views.sql            # Hazır görünümler
+├── Yasin_Yildirim_E_Ticaret_Yönetimi.sql  # (TÜM PROJE - Tek Çalıştırılabilir Dosya)
+├── docker-compose.yml          # Docker konfigürasyonu
+└── README.md                   # Proje dökümantasyonu
+```
+
+## 🤝 Katkı ve İletişim
 
 Pull request ve issue üzerinden öneri, düzeltme veya katkıda bulunabilirsiniz.
 
