@@ -17,10 +17,10 @@ Bu proje, **PostgreSQL** kullanılarak geliştirilmiş, e-ticaret yönetim süre
 
 Detaylar ve örnek Docker kurulum adımlarına repo içinden ulaşabilirsiniz.
 
-## ER Diyagramı
+## DrawSQL Diyagramı
 
 Tablolar ve ilişkiler [DrawSQL](https://drawsql.app/) ile modellenmiştir. 
-Diyagramı görmek için: [ER Diyagramı Linki]([https://drawsql.app/](https://drawsql.app/teams/none-4350/diagrams/e-ticaret))
+Diyagramı görmek için: [Proje Linki](https://drawsql.app/teams/none-4350/diagrams/e-ticaret)
 
 ## Kapsamda Yer Alan Tablolar
 
@@ -49,6 +49,7 @@ Diyagramı görmek için: [ER Diyagramı Linki]([https://drawsql.app/](https://d
 - Kategorilere göre ortalama ürün fiyat ve stok durumu
 
 Detaylı tüm komutlar, fonksiyonlar ve prosedürler `Yasin_Yildirim_E_Ticaret_Yönetimi.sql` dosyasında açıklayıcı yorumlar ile birlikte sunulmuştur.
+Her şeyi tek dosyada görmek istemeyenler için 'Extras' klasörü içinde her bir sql bileşeni için ayrı ayrı console dosyası eklenmiştir.
 
 ## Katkı ve İletişim
 
