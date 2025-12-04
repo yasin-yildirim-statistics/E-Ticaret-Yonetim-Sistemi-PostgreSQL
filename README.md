@@ -22,6 +22,10 @@ Detaylar ve örnek Docker kurulum adımlarına repo içinden ulaşabilirsiniz.
 Tablolar ve ilişkiler [DrawSQL](https://drawsql.app/) ile modellenmiştir. 
 Diyagramı görmek için: [Proje Linki](https://drawsql.app/teams/none-4350/diagrams/e-ticaret)
 
+## CodeShare
+
+Kodu görmek için: [CodeShare](https://codeshare.io/e-ticaret-portfolio)
+
 ## Kapsamda Yer Alan Tablolar
 
 - `categories`: Kategoriler
